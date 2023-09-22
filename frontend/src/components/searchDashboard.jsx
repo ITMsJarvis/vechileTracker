@@ -1,19 +1,31 @@
 import { useState } from 'react';
-import "../App.css"
+import { Link } from 'react-router-dom'
 import axios from 'axios'
 import connectionString from './restrcitedData';
+import "../App.css"
 
 const HamburgerMenu = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [vechileNo, setVechileNumber] = useState("")
+  const [conditon, setCondtions] = useState({
+    vehicleNumber: "",
+    siteName: ""
+  })
   const [data, setData] = useState([])
-  const tableHeaders = ['#', 'Site', 'Total Exists', 'Avg Time(Hh:Mm)', 'Total Inside'];
+
+  // Avg Time(Hh: Mm)
+  const tableHeaders = ['#', 'Site', 'Total Exists', 'Tracker', 'Total Inside'];
 
   async function getData(check) {
-    let response = await axios.get(connectionString)
-    let filteredData = response.data.Vehicle.filter(x => x.VehicleNo.includes(check.toUpperCase()))
+    let response = await axios.get(connectionString.connectionString)
+    let filteredData = response.data.Vehicle.filter(x => {
+      const vehicleNumberMatch = x.VehicleNo.includes(check.vehicleNumber);
+      const siteNameMatch = x.Location.includes(check.siteName);
+      return siteNameMatch
+    })
+    console.log(filteredData)
     setData(filteredData)
   }
+
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -21,12 +33,12 @@ const HamburgerMenu = () => {
 
   return (
     <div className='flex justify-content-center'>
-      <div className={`hamburger-menu ${menuOpen ? 'open' : ''}`}>
+      <div className={`hamburger-menu  ${menuOpen ? 'open' : ''}`}>
         <button onClick={toggleMenu} className="hamburger-icon">
           {menuOpen ? (
             <span className="text-2xl">&#9654;</span>
           ) : (
-            <span className="text-2xl border-r-2">&#9776;</span>
+            <span className="text-2xl ">&#9776;</span>
           )}
         </button>
         {menuOpen && (
@@ -39,7 +51,7 @@ const HamburgerMenu = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Vehicle:</span>
-                  <input type="text" className="border-2 border-blue-200 p-2" onChange={(e) => setVechileNumber(e.target.value)} />
+                  <input type="text" className="border-2 border-blue-200 p-2" placeholder='Vecile Number' onChange={(e) => setCondtions({ ...conditon, vehicleNumber: e.target.value })} />
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Start Date:</span>
@@ -61,7 +73,7 @@ const HamburgerMenu = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Site Name:</span>
-                  <input type="text" className="border-2 border-blue-200 p-2" />
+                  <input type="text" className="border-2 border-blue-200 p-2" onChange={(e) => setCondtions({ ...conditon, siteName: e.target.value })} />
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Stoppage Limit:</span>
@@ -70,33 +82,19 @@ const HamburgerMenu = () => {
               </div>
             </ul>
             <div className="flex items-center justify-center">
-              <button className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded" onClick={() => getData(vechileNo)}>
+              <button className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded" onClick={() => {
+                getData(conditon)
+              }}>
                 View
               </button>
             </div>
           </div>
         )}
-
       </div>
       <div className='w-full'>
-        <div className="border-l-2 ml-2">
-          <div className="ml-3">
-            <ul className="flex justify-center p-3">
-              <div className="flex">
-                <li>Report : </li>
-                testing
-              </div>
-              <div className="flex">
-                <li>Date : </li>
-              </div>
-              <div className="flex">
-                <li>Stop Time : </li>
-              </div>
-              <div className="flex">
-                <li>Site Name : </li>
-              </div>
-            </ul>
-            <table className="w-full border-collapse border shadow-2xl rounded text-center" style={{ width: '100%' }}>
+        <div className=" ml-2 h-96">
+          <div className="ml-3 ">
+            <table className="w-full border-collapse border shadow-2xl rounded text-center border-spacing-2 ">
               <thead className="p-3">
                 <tr className=" bg-blue-200 font-bold p-3">
                   {tableHeaders.map((header, index) => (
@@ -116,10 +114,10 @@ const HamburgerMenu = () => {
                       {entry.VehicleNo}
                     </td>
                     <td className="border border-gray-300 text-center">
-                      {entry.Speed}
+
                     </td>
                     <td className="border border-gray-300 text-center">
-                      {entry.Location.split(" ").slice(1)}
+                      <Link to={`/${entry.VehicleNo}`} >{entry.Location.split(" ").slice(1)}</Link>
                     </td>
                     <td className="border border-gray-300 text-center">
                       testing
@@ -131,7 +129,7 @@ const HamburgerMenu = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

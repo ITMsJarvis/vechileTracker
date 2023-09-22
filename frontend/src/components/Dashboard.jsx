@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'
 import axios from 'axios'
-import connectionString from "./restrcitedData.js"
+import string from "./restrcitedData.js"
 
 const Dashboard = () => {
     let [data, setData] = useState([])
@@ -11,7 +11,7 @@ const Dashboard = () => {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get(connectionString);
+                const response = await axios.get(string.connectionString);
                 setData(response.data.Vehicle);
                 setIsLoading(false);
             } catch (err) {
@@ -89,7 +89,7 @@ const Dashboard = () => {
 
                             </td>
                             <td className="border border-gray-300 text-center">
-                                <Link to={`/${entry.VehicleNo}`}>{entry.Location.split(" ").slice(1)}</Link>  
+                                <Link to={`/${entry.VehicleNo}`}>{entry.Location.split(" ").slice(1)}</Link>
                             </td>
                             <td className="border border-gray-300 text-center">
                                 {entry.Speed}

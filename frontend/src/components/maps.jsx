@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import axios from 'axios'
-import connectionString from './restrcitedData';
+import string from './restrcitedData';
 
 const maps = () => {
     let [cordinate, setCordinates] = useState({
@@ -12,7 +12,7 @@ const maps = () => {
     let { id } = useParams()
     useEffect(() => {
         async function map() {
-            let response = await axios.get(connectionString)
+            let response = await axios.get(string.connectionString)
             let filteredData = await response.data.Vehicle.filter(x => x.VehicleNo.includes(id))
             setCordinates({ lat: filteredData[0].Lat, long: filteredData[0].Long })
         }
@@ -23,7 +23,7 @@ const maps = () => {
     ""
     console.log(id)
     return <div>
-        <iframe src={`http://maps.google.com/maps?q=${cordinate.lat},${cordinate.long}&z=16&output=embed`} height="450" width="600"></iframe>
+        <iframe src={`http://maps.google.com/maps?q=${cordinate.lat},${cordinate.long}&z=16&output=embed`} height="1080px" width="100%"></iframe>
     </div>;
 };
 
